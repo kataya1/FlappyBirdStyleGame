@@ -8,6 +8,8 @@ TagManager:
   - Pipeblank
   - Flappy
   - Floor
+  - server
+  - Room
   layers:
   - Default
   - TransparentFX

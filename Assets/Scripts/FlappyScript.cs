@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.SceneManagement;
 
 /// <summary>
 /// Spritesheet for Flappy Bird found here: http://www.spriters-resource.com/mobile_phone/flappybird/sheet/59537/
@@ -12,6 +13,7 @@ public class FlappyScript : MonoBehaviour
     public Sprite GetReadySprite;
     public float RotateUpSpeed = 1, RotateDownSpeed = 1;
     public GameObject IntroGUI, DeathGUI;
+    public GameObject server;
     public Collider2D restartButtonGameCollider;
     public float VelocityPerJump = 3;
     public float XSpeed = 1;
@@ -62,7 +64,8 @@ public class FlappyScript : MonoBehaviour
         else if (GameStateManager.GameState == GameState.Dead)
         {
             Vector2 contactPoint = Vector2.zero;
-
+            
+            
             if (Input.touchCount > 0)
                 contactPoint = Input.touches[0].position;
             if (Input.GetMouseButtonDown(0))
@@ -74,6 +77,10 @@ public class FlappyScript : MonoBehaviour
             {
                 GameStateManager.GameState = GameState.Intro;
                 Application.LoadLevel(Application.loadedLevelName);
+            }
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                    SceneManager.LoadScene("mainmenu");
             }
         }
 
@@ -181,6 +188,10 @@ public class FlappyScript : MonoBehaviour
         GameStateManager.GameState = GameState.Dead;
         DeathGUI.SetActive(true);
         GetComponent<AudioSource>().PlayOneShot(DeathAudioClip);
+    }
+    void sendScore()
+    {
+
     }
 
 }

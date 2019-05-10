@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net.Sockets;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 
@@ -18,6 +19,7 @@ public class Client : MonoBehaviour
     public GameObject playerscontainer;
     public GameObject chatcontainer;
     public GameObject messagePrefab;
+
     public string clientName;
 
 
@@ -73,7 +75,11 @@ public class Client : MonoBehaviour
     {
         //checks if it's a chat or player
         Debug.Log(data.Substring(0,4));
-        if ((data.Substring(0,4)).Equals("PJin"))
+        if ((data.Substring(0,4)).Equals("CMND"))
+        {
+            CommandHandler(data.Substring(4));
+        }
+        else if ((data.Substring(0,4)).Equals("PJin"))
         {
             GameObject go = Instantiate(messagePrefab,playerscontainer.transform) as GameObject;
             go.GetComponentInChildren<Text>().text = data.Substring(4);
@@ -85,6 +91,15 @@ public class Client : MonoBehaviour
         }
             
     }
+
+    private void CommandHandler(string s)
+    {
+        if(s.Equals("START"))
+            SceneManager.LoadScene("mainGame");
+    }
+
+
+
     private void Send(string data)
     {
         //check if it's connected
@@ -103,14 +118,19 @@ public class Client : MonoBehaviour
         try
         {
             string message = GameObject.Find("chatinput").GetComponent<InputField>().text;
-            Debug.Log("problem is not here, message " + message);
+            // Debug.Log("problem is not here, message " + message);
             Send(message);
         }
         catch(Exception e)
         {
             Debug.Log("chatinput error: " + e.Message);
         }
-       
+    }
+    public void OnStartButton()
+    {
+        //make a new command option in 
+        string MESSAGE = "COMMAND" + ":" + "START";
+        Send(MESSAGE);
     }
 
 }

@@ -108,12 +108,16 @@ public class Server : MonoBehaviour
         //
         // SendMessage a message, to everyone, say someone has connected
 
-        Broadcast("PJin" + clients[clients.Count-1].ClientName + "joined #in room" + clients.Count.ToString(),clients) ;
+        Broadcast("PJin" + clients[clients.Count-1].ClientName + " joined #in room" + clients.Count.ToString(),clients) ;
     }
     private void OnIncomingData(ServerClient c, string data)
     {
-        Debug.Log(data);
-        Broadcast("CHAT" + c.ClientName + ":" + data,clients);
+        // Debug.Log(data);
+        string[] check = data.Split(':');
+        if(check[0].Equals("COMMAND") && c.ClientName.Equals("Host"))
+            Broadcast("CMND" + check[1],clients);
+        else
+            Broadcast("CHAT" + c.ClientName + ":" + data,clients);
     }
     private void Broadcast(string data,List<ServerClient> cl)
     {
@@ -121,7 +125,7 @@ public class Server : MonoBehaviour
         {
             try{
                 StreamWriter writer = new StreamWriter(c.tcp.GetStream());
-                Debug.Log("actully sending to clients");
+                // Debug.Log("actully sending to clients");
                 writer.WriteLine(data);
                 writer.Flush();
             }
@@ -138,10 +142,15 @@ public class ServerClient
 {
     public TcpClient tcp;
     public string ClientName;
+    private static int instanceNumber = 0;
     //
     public ServerClient(TcpClient clientSocket)
     {
-        ClientName = "Guest";
+        if(instanceNumber == 0)
+            ClientName = "Host";
+        else
+            ClientName = "Guest" + instanceNumber.ToString();
         tcp = clientSocket;
+        instanceNumber++;
     }
 }
